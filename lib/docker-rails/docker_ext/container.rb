@@ -1,38 +1,41 @@
 module Docker
-  
   class Container
 
     def self.spawn(name, opts, runopts={})
-      begin
-        container = Docker::Container.get(name, :all => true)
-      rescue Exception => e
+      result = {
+        container: fetch(name),
+        created: false,
+        started: false
+      }
+      if result[:container].nil?
         opts["name"] = name
-        container = Docker::Container.create(opts)
-        puts "-- docker container #{name} created"
+        result[:container] = Docker::Container.create(opts)
+        result[:created] = true
       end
-      if container.info["State"] and container.info["Running"]
-        puts "-- docker container #{name} is already running"
-      else
-        container.start(runopts)
-        puts "-- docker container #{name} started"
+      if not result[:container].info["State"] or not result[:container].info["State"]["Running"]
+        result[:container].start(runopts)
+        result[:started] = true
       end
-      container
+      result
     end
     
     def self.stop(name)
-      begin
-        container = Docker::Container.get(name, :all => true)
-        if container.info["State"]["Running"]
-          container.kill
-          true
-        else
-          false
-        end
-      rescue Exception => e
+      container = fetch(name)      
+      if container and container.info["State"]["Running"]
+        container.kill
+        true
+      else
         false
+      end
+    end
+    
+    def self.fetch(container_name)
+      begin
+        Docker::Container.get(container_name, :all => true)
+      rescue Exception => e
+        nil
       end
     end
   
   end
-
 end

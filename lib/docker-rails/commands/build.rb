@@ -1,21 +1,18 @@
 command :'build' do |c|
-  c.syntax = "docker-rails build [service]"
-  c.summary = "Build service"
-  c.description = "Build a docker image from a service configuration"
+  include DockerRails::Helper
+  c.syntax = "docker-rails build [service] [service] ..."
+  c.summary = "Build services"
+  c.description = "Build docker image from service configuration"
 
   c.action do |args, options|
-    
-    # Prepare arguments
-    @service = args[0]
-    
-    # Pack assets    
-    bar = ProgressBar.new(10)
-    bar.show
-    (0..9).each do |step|
-      sleep 1
-      bar.increment
+    each_service(args) do |service_name, config|
+      puts "-- building service: #{service_name}"
+      File.open("Dockerfile", 'w') {|f| f.write(config["build"].join("\n"))}
+      Docker::Image.build_from_dir(".", "t" => config["image"]) do |event|
+        puts "#{JSON.parse(event)["stream"]}" if options.verbose
+      end
+      FileUtils.rm("Dockerfile")
     end
-
-    say_ok 'Your docker image was successfully created!'
   end
+  
 end

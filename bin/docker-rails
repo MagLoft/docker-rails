@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+
 require 'commander/import'
 $:.push File.expand_path("../../lib", __FILE__)
 require 'docker-rails'
@@ -11,4 +12,8 @@ program :help_formatter, :compact
 
 default_command :help
 
-# require 'docker-rails/commands'
+if not File.exists?("config/docker-rails.yml")
+  say_error "! no docker-rails configuration found at config/docker-rails.yml"
+end
+
+require 'docker-rails/commands'

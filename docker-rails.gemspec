@@ -15,7 +15,6 @@ Gem::Specification.new do |s|
   s.description = "This gem allows you to setup a comprehensive docker/rails environment."
   s.required_rubygems_version = '>= 1.3.6'
   s.add_dependency "commander", '~> 4.1'
-  s.add_dependency 'docker', '~> 0.0.1'
   s.add_dependency 'docker-api', '~> 1.19'
   s.add_development_dependency "rake", '~> 10.0'
   s.add_development_dependency "pry", '~> 0.10.1'
