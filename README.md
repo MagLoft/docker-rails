@@ -2,7 +2,7 @@ Docker Rails - Docker tools for rails applications
 ==================================================
 
 **This gem allows you to setup a comprehensive docker/rails environment.**
-<http://www.magloft.com>
+<https://github.com/magloft/docker-rails>
 
 
 INSTALLATION
